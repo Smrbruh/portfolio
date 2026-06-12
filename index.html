@@ -4,7 +4,7 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Bakdaulet Sotsial — Systems Engineer</title>
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23080810'/%3E%3Cpath d='M32 8L12 18v14c0 12 8 22 20 24 12-2 20-12 20-24V18L32 8z' fill='none' stroke='%234f46e5' stroke-width='2' stroke-linejoin='round'/%3E%3Cpath d='M32 8L12 18v14c0 12 8 22 20 24 12-2 20-12 20-24V18L32 8z' fill='none' stroke='%2300ffa3' stroke-width='2' stroke-linejoin='round' stroke-dasharray='4 4'/%3E%3Ctext x='32' y='43' text-anchor='middle' font-size='20' font-family='monospace' fill='%2300ffa3' font-weight='bold'%3E_%3C/text%3E%3C/svg%3E">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%230a0a18'/%3E%3Cpath d='M32 8L12 18v14c0 12 8 22 20 24 12-2 20-12 20-24V18L32 8z' fill='none' stroke='%2300ffa3' stroke-width='2.5' stroke-linejoin='round'/%3E%3Ctext x='32' y='42' text-anchor='middle' font-size='18' font-family='monospace' fill='%2300ffa3' font-weight='bold'%3E_%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
@@ -189,6 +189,7 @@ nav {
 .hero-bio .hl { color: var(--mint); font-weight: 500; }
 
 .hero-actions { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 60px; }
+<button id="soundToggle" style="background: none; border: 1px solid var(--border2); border-radius: 4px; padding: 6px 12px; font-family: var(--mono); font-size: 10px; color: var(--muted); cursor: pointer;">🔇 SOUND OFF</button>
 .btn {
   font-family: var(--mono);
   font-size: 11px; font-weight: 600;
@@ -1413,7 +1414,10 @@ footer {
   const lines = document.querySelectorAll('.boot-line');
   lines.forEach(line => {
     const delay = parseInt(line.dataset.delay) || 0;
-    setTimeout(() => line.classList.add('show'), delay + 200);
+    setTimeout(() => {
+      line.classList.add('show');
+      if (window.soundSystem && window.soundSystem.playTerminalBeep) window.soundSystem.playTerminalBeep();
+    }, delay + 200);
   });
 })();
 
@@ -1462,6 +1466,168 @@ window.addEventListener('scroll', () => {
     a.style.color = isActive ? 'var(--ice)' : '';
   });
 }, { passive: true });
+</script>
+  <script>
+// ==================== ЗВУКОВАЯ СИСТЕМА ====================
+(function() {
+    let audioCtx = null;
+    let ambientGain = null;
+    let ambientOsc = null;
+    let ambientFilter = null;
+    let isEnabled = false;
+    let isInitialized = false;
+
+    const soundToggle = document.getElementById('soundToggle');
+
+    // Функция инициализации (только после клика пользователя)
+    function initAudio() {
+        if (isInitialized) return;
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        
+        // --- Ambient: серверный гул (две синусоиды с шумом) ---
+        ambientGain = audioCtx.createGain();
+        ambientGain.gain.value = 0;
+        ambientGain.connect(audioCtx.destination);
+        
+        // Низкий гул 60Hz
+        ambientOsc = audioCtx.createOscillator();
+        ambientOsc.type = 'sine';
+        ambientOsc.frequency.value = 60;
+        ambientOsc.connect(ambientGain);
+        
+        // Второй тон 120Hz (гармоника)
+        const osc2 = audioCtx.createOscillator();
+        osc2.type = 'sine';
+        osc2.frequency.value = 120;
+        osc2.connect(ambientGain);
+        
+        // Фильтр для смягчения
+        ambientFilter = audioCtx.createBiquadFilter();
+        ambientFilter.type = 'lowpass';
+        ambientFilter.frequency.value = 400;
+        ambientOsc.connect(ambientFilter);
+        osc2.connect(ambientFilter);
+        ambientFilter.connect(ambientGain);
+        
+        // Розовый шум (чуть-чуть)
+        const bufferSize = 4096;
+        const noiseNode = audioCtx.createScriptProcessor(bufferSize, 1, 1);
+        noiseNode.onaudioprocess = function(e) {
+            if (!isEnabled) return;
+            const output = e.outputBuffer.getChannelData(0);
+            for (let i = 0; i < bufferSize; i++) {
+                output[i] = (Math.random() - 0.5) * 0.03;
+            }
+        };
+        noiseNode.connect(ambientGain);
+        
+        ambientOsc.start();
+        osc2.start();
+        noiseNode.connect(ambientGain);
+        
+        isInitialized = true;
+    }
+    
+    // Включение/выключение звука
+    function enableSound() {
+        if (!isInitialized) initAudio();
+        if (!audioCtx) return;
+        
+        isEnabled = true;
+        audioCtx.resume();
+        ambientGain.gain.value = 0.15; // тихий фон
+        if (soundToggle) {
+            soundToggle.innerHTML = '🔊 SOUND ON';
+            soundToggle.style.borderColor = 'var(--mint)';
+            soundToggle.style.color = 'var(--mint)';
+        }
+    }
+    
+    function disableSound() {
+        isEnabled = false;
+        if (ambientGain) ambientGain.gain.value = 0;
+        if (audioCtx) audioCtx.suspend();
+        if (soundToggle) {
+            soundToggle.innerHTML = '🔇 SOUND OFF';
+            soundToggle.style.borderColor = 'var(--border2)';
+            soundToggle.style.color = 'var(--muted)';
+        }
+    }
+    
+    // Терминальный звук (короткий beep)
+    function playTerminalBeep() {
+        if (!isEnabled || !audioCtx) return;
+        const now = audioCtx.currentTime;
+        const beep = audioCtx.createOscillator();
+        const beepGain = audioCtx.createGain();
+        beep.type = 'sine';
+        beep.frequency.value = 880;
+        beepGain.gain.setValueAtTime(0.1, now);
+        beepGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.15);
+        beep.connect(beepGain);
+        beepGain.connect(audioCtx.destination);
+        beep.start();
+        beep.stop(now + 0.15);
+    }
+    
+    // Клик при наведении на проект
+    function playHoverClick() {
+        if (!isEnabled || !audioCtx) return;
+        const now = audioCtx.currentTime;
+        const click = audioCtx.createOscillator();
+        const clickGain = audioCtx.createGain();
+        click.type = 'triangle';
+        click.frequency.value = 1200;
+        clickGain.gain.setValueAtTime(0.05, now);
+        clickGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.05);
+        click.connect(clickGain);
+        clickGain.connect(audioCtx.destination);
+        click.start();
+        click.stop(now + 0.05);
+    }
+    
+    // Триггеры для boot-последовательности (клавиатурный звук)
+    function triggerBootSound(index) {
+        setTimeout(() => {
+            playTerminalBeep();
+        }, index * 60);
+    }
+    
+    // Обработчик кнопки
+    if (soundToggle) {
+        soundToggle.addEventListener('click', () => {
+            if (!isEnabled) {
+                enableSound();
+            } else {
+                disableSound();
+            }
+        });
+    }
+    
+    // Запускаем boot-звуки, если есть boot-line
+    const bootLines = document.querySelectorAll('.boot-line');
+    bootLines.forEach((line, idx) => {
+        const delay = parseInt(line.dataset.delay) || 0;
+        setTimeout(() => {
+            if (isEnabled) playTerminalBeep();
+        }, delay + 300);
+    });
+    
+    // Вешаем hover-звуки на проекты
+    const projectRows = document.querySelectorAll('.project-row');
+    projectRows.forEach(row => {
+        row.addEventListener('mouseenter', () => {
+            playHoverClick();
+        });
+    });
+    
+    // Экспортируем триггеры глобально для использования в существующем коде
+    window.soundSystem = {
+        playTerminalBeep,
+        playHoverClick,
+        isEnabled: () => isEnabled
+    };
+})();
 </script>
 </body>
 </html>
