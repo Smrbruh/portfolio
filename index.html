@@ -1,13 +1,13 @@
-!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Bakdaulet Sotsial — Systems Engineer</title>
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%230a0a18'/%3E%3Cpath d='M32 8L12 18v14c0 12 8 22 20 24 12-2 20-12 20-24V18L32 8z' fill='none' stroke='%2300ffa3' stroke-width='2.5' stroke-linejoin='round'/%3E%3Ctext x='32' y='42' text-anchor='middle' font-size='18' font-family='monospace' fill='%2300ffa3' font-weight='bold'%3E_%3C/text%3E%3C/svg%3E">
+<meta name="description" content="Bakdaulet Sotsial — Cybersecurity & AI student at Astana IT University. Open-source systems, signal processing, and full-stack engineering."/>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23090912'/%3E%3Cpath d='M32 8L12 18v14c0 12 8 22 20 24 12-2 20-12 20-24V18L32 8z' fill='none' stroke='%2300ffa3' stroke-width='3' stroke-linejoin='round'/%3E%3Cpath d='M24 32l6 6 12-14' fill='none' stroke='%234f46e5' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -31,6 +31,11 @@
 
 html { scroll-behavior: smooth; }
 
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+}
+
 body {
   background: var(--void);
   color: var(--ice);
@@ -41,6 +46,13 @@ body {
 }
 
 ::selection { background: var(--indigo); color: #fff; }
+
+/* ── Focus visibility ─── */
+a:focus-visible, button:focus-visible, .skill-nav-item:focus-visible, .project-row:focus-visible, .sound-toggle:focus-visible {
+  outline: 2px solid var(--mint);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
 
 /* ── Scanline overlay ─── */
 body::before {
@@ -102,6 +114,7 @@ nav {
 }
 .nav-logo .slash { color: var(--indigo); }
 .nav-logo .domain { color: var(--mint); }
+.nav-right { display: flex; align-items: center; gap: 28px; }
 .nav-links { display: flex; gap: 24px; list-style: none; }
 .nav-links a {
   font-family: var(--mono);
@@ -118,9 +131,36 @@ nav {
   position: absolute; bottom: -2px; left: 0; right: 0;
   height: 1px; background: var(--mint);
   transform: scaleX(0); transition: transform 0.15s;
+  transform-origin: left;
 }
 .nav-links a:hover { color: var(--ice); }
 .nav-links a:hover::after { transform: scaleX(1); }
+
+/* ── Sound toggle ─── */
+.sound-toggle {
+  font-family: var(--mono);
+  font-size: 10px; font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  background: transparent;
+  border: 1px solid var(--border2);
+  border-radius: 3px;
+  padding: 5px 10px;
+  cursor: pointer;
+  display: flex; align-items: center; gap: 6px;
+  transition: all 0.15s;
+}
+.sound-toggle:hover { border-color: var(--mint); color: var(--ice); }
+.sound-toggle .dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--mint);
+  flex-shrink: 0;
+  transition: background 0.15s;
+  box-shadow: 0 0 6px rgba(0,255,163,0.6);
+}
+.sound-toggle.muted .dot { background: var(--muted); box-shadow: none; }
+.sound-toggle.muted { color: var(--dim); }
 
 /* ── HERO ─── */
 #hero {
@@ -199,6 +239,9 @@ nav {
   transition: all 0.18s;
   display: inline-flex; align-items: center; gap: 7px;
   text-transform: uppercase;
+  border: none;
+  cursor: pointer;
+  font-family: var(--mono);
 }
 .btn-primary {
   background: var(--indigo);
@@ -227,7 +270,10 @@ nav {
   border-right: 1px solid var(--border);
   display: flex; flex-direction: column;
   gap: 2px;
+  cursor: default;
+  transition: background 0.15s;
 }
+.metric:hover { background: rgba(79,70,229,0.05); }
 .metric:last-child { border-right: none; }
 .metric-num {
   font-family: var(--mono);
@@ -294,6 +340,12 @@ h2 em { color: var(--indigo); font-style: normal; }
 .dot.g { background: #28c840; }
 .explorer-path { color: var(--indigo); margin-left: 12px; }
 .explorer-path .sep { color: var(--muted); }
+.explorer-count {
+  margin-left: auto;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  color: var(--dim);
+}
 
 .project-row {
   border-bottom: 1px solid var(--border);
@@ -515,17 +567,20 @@ h2 em { color: var(--indigo); font-style: normal; }
   color: #9090c0;
   border: 1px solid var(--border2);
   transition: all 0.15s;
+  cursor: default;
 }
 .pill:hover {
   border-color: var(--indigo);
   color: var(--ice);
   background: rgba(79,70,229,0.08);
+  transform: translateY(-1px);
 }
 .pill.key {
   border-color: rgba(0,255,163,0.2);
   color: var(--mint);
   background: rgba(0,255,163,0.05);
 }
+.pill.key:hover { border-color: var(--mint); background: rgba(0,255,163,0.1); }
 
 /* ── ABOUT ─── */
 #about { padding: 100px 0; }
@@ -661,6 +716,28 @@ footer {
   animation: blink 1s step-end infinite;
 }
 
+/* ── Back to top ─── */
+.to-top {
+  position: fixed;
+  bottom: 24px; right: 24px;
+  width: 40px; height: 40px;
+  border-radius: 4px;
+  background: var(--card2);
+  border: 1px solid var(--border2);
+  color: var(--muted);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--mono);
+  font-size: 16px;
+  cursor: pointer;
+  z-index: 90;
+  opacity: 0;
+  transform: translateY(8px);
+  transition: all 0.2s;
+  pointer-events: none;
+}
+.to-top.show { opacity: 1; transform: translateY(0); pointer-events: auto; }
+.to-top:hover { border-color: var(--mint); color: var(--mint); }
+
 /* ── Responsive ─── */
 @media (max-width: 780px) {
   .about-layout { grid-template-columns: 1fr; gap: 40px; }
@@ -675,11 +752,13 @@ footer {
   .project-row-header { grid-template-columns: 36px 1fr; }
   .row-tags { display: none; }
   .row-chevron { grid-column: span 2; display: none; }
+  .nav-links { display: none; }
+  .nav-right { gap: 0; }
 }
 
 @media (max-width: 520px) {
   .wrap { padding: 0 20px; }
-  .nav-links { gap: 16px; }
+  .nav-inner { padding: 0 20px; }
 }
 </style>
 </head>
@@ -692,12 +771,17 @@ footer {
 <nav>
   <div class="nav-inner">
     <a href="#hero" class="nav-logo">smrbruh<span class="slash">/</span><span class="domain">dev</span></a>
-    <ul class="nav-links">
-      <li><a href="#projects">projects</a></li>
-      <li><a href="#skills">skills</a></li>
-      <li><a href="#about">about</a></li>
-      <li><a href="#contact">contact</a></li>
-    </ul>
+    <div class="nav-right">
+      <ul class="nav-links">
+        <li><a href="#projects">projects</a></li>
+        <li><a href="#skills">skills</a></li>
+        <li><a href="#about">about</a></li>
+        <li><a href="#contact">contact</a></li>
+      </ul>
+      <button class="sound-toggle" id="soundToggle" aria-pressed="true" title="Toggle interface sounds">
+        <span class="dot"></span><span id="soundLabel">SFX ON</span>
+      </button>
+    </div>
   </div>
 </nav>
 
@@ -738,9 +822,9 @@ footer {
       </p>
 
       <div class="hero-actions">
-        <a href="https://github.com/Smrbruh" target="_blank" class="btn btn-primary">↗ GitHub / Smrbruh</a>
-        <a href="https://www.linkedin.com/in/bakdaulet-sotsial-06a16b377/" target="_blank" class="btn btn-ghost">LinkedIn</a>
-        <a href="https://t.me/smrbruh" target="_blank" class="btn btn-ghost">Telegram</a>
+        <a href="https://github.com/Smrbruh" target="_blank" class="btn btn-primary" data-sfx="click">↗ GitHub / Smrbruh</a>
+        <a href="https://www.linkedin.com/in/bakdaulet-sotsial-06a16b377/" target="_blank" class="btn btn-ghost" data-sfx="click">LinkedIn</a>
+        <a href="https://t.me/smrbruh" target="_blank" class="btn btn-ghost" data-sfx="click">Telegram</a>
       </div>
 
       <div class="hero-metrics reveal">
@@ -784,10 +868,11 @@ footer {
         <span class="explorer-path">
           <span class="sep">~/</span>smrbruh<span class="sep">/</span>projects
         </span>
+        <span class="explorer-count">8 items</span>
       </div>
 
       <!-- 1C2API -->
-      <div class="project-row" onclick="toggleProject(this)">
+      <div class="project-row" onclick="toggleProject(this)" tabindex="0" role="button" aria-expanded="false">
         <div class="project-row-header">
           <span class="row-index">01</span>
           <div class="row-main">
@@ -818,7 +903,7 @@ footer {
                 <li>JSON Schema as single source of truth — adding a new generator is one module</li>
                 <li>Roadmap: BSL code gen, Pytest/Vitest scaffolding, mock server, React Query hooks, CI/CD</li>
               </ul>
-              <a href="https://github.com/Smrbruh/1c2api" target="_blank" class="detail-link">↗ View on GitHub</a>
+              <a href="https://github.com/Smrbruh/1c2api" target="_blank" class="detail-link" data-sfx="click">↗ View on GitHub</a>
             </div>
             <div class="detail-right">
               <div class="meta-section">
@@ -844,7 +929,7 @@ footer {
       </div>
 
       <!-- NEXUS -->
-      <div class="project-row" onclick="toggleProject(this)">
+      <div class="project-row" onclick="toggleProject(this)" tabindex="0" role="button" aria-expanded="false">
         <div class="project-row-header">
           <span class="row-index">02</span>
           <div class="row-main">
@@ -890,7 +975,7 @@ footer {
       </div>
 
       <!-- DOCTOR API -->
-      <div class="project-row" onclick="toggleProject(this)">
+      <div class="project-row" onclick="toggleProject(this)" tabindex="0" role="button" aria-expanded="false">
         <div class="project-row-header">
           <span class="row-index">03</span>
           <div class="row-main">
@@ -936,7 +1021,7 @@ footer {
       </div>
 
       <!-- WHATSAPP BOT -->
-      <div class="project-row" onclick="toggleProject(this)">
+      <div class="project-row" onclick="toggleProject(this)" tabindex="0" role="button" aria-expanded="false">
         <div class="project-row-header">
           <span class="row-index">04</span>
           <div class="row-main">
@@ -982,7 +1067,7 @@ footer {
       </div>
 
       <!-- PRIVACY BOT -->
-      <div class="project-row" onclick="toggleProject(this)">
+      <div class="project-row" onclick="toggleProject(this)" tabindex="0" role="button" aria-expanded="false">
         <div class="project-row-header">
           <span class="row-index">05</span>
           <div class="row-main">
@@ -1030,7 +1115,7 @@ footer {
       </div>
 
       <!-- CSI -->
-      <div class="project-row" onclick="toggleProject(this)">
+      <div class="project-row" onclick="toggleProject(this)" tabindex="0" role="button" aria-expanded="false">
         <div class="project-row-header">
           <span class="row-index">06</span>
           <div class="row-main">
@@ -1080,7 +1165,7 @@ footer {
       </div>
 
       <!-- PATH TRACER -->
-      <div class="project-row" onclick="toggleProject(this)">
+      <div class="project-row" onclick="toggleProject(this)" tabindex="0" role="button" aria-expanded="false">
         <div class="project-row-header">
           <span class="row-index">07</span>
           <div class="row-main">
@@ -1129,7 +1214,7 @@ footer {
       </div>
 
       <!-- GESTURE INSTRUMENT -->
-      <div class="project-row" onclick="toggleProject(this)">
+      <div class="project-row" onclick="toggleProject(this)" tabindex="0" role="button" aria-expanded="false">
         <div class="project-row-header">
           <span class="row-index">08</span>
           <div class="row-main">
@@ -1187,14 +1272,14 @@ footer {
 
     <div class="skills-container reveal">
       <div class="skills-nav" id="skillsNav">
-        <div class="skill-nav-item active" data-panel="lang">Languages</div>
-        <div class="skill-nav-item" data-panel="frontend">Frontend</div>
-        <div class="skill-nav-item" data-panel="backend">Backend</div>
-        <div class="skill-nav-item" data-panel="db">Databases</div>
-        <div class="skill-nav-item" data-panel="ai">AI / ML</div>
-        <div class="skill-nav-item" data-panel="devops">DevOps</div>
-        <div class="skill-nav-item" data-panel="security">Security</div>
-        <div class="skill-nav-item" data-panel="academic">Academic</div>
+        <div class="skill-nav-item active" data-panel="lang" tabindex="0" role="button">Languages</div>
+        <div class="skill-nav-item" data-panel="frontend" tabindex="0" role="button">Frontend</div>
+        <div class="skill-nav-item" data-panel="backend" tabindex="0" role="button">Backend</div>
+        <div class="skill-nav-item" data-panel="db" tabindex="0" role="button">Databases</div>
+        <div class="skill-nav-item" data-panel="ai" tabindex="0" role="button">AI / ML</div>
+        <div class="skill-nav-item" data-panel="devops" tabindex="0" role="button">DevOps</div>
+        <div class="skill-nav-item" data-panel="security" tabindex="0" role="button">Security</div>
+        <div class="skill-nav-item" data-panel="academic" tabindex="0" role="button">Academic</div>
       </div>
       <div style="flex:1">
         <div class="skill-panel active" id="panel-lang">
@@ -1389,9 +1474,9 @@ footer {
         Astana, Kazakhstan 🇰🇿
       </p>
       <div class="contact-links reveal">
-        <a href="https://github.com/Smrbruh" target="_blank" class="btn btn-primary">↗ GitHub</a>
-        <a href="https://www.linkedin.com/in/bakdaulet-sotsial-06a16b377/" target="_blank" class="btn btn-ghost">LinkedIn</a>
-        <a href="https://t.me/smrbruh" target="_blank" class="btn btn-ghost">Telegram @smrbruh</a>
+        <a href="https://github.com/Smrbruh" target="_blank" class="btn btn-primary" data-sfx="click">↗ GitHub</a>
+        <a href="https://www.linkedin.com/in/bakdaulet-sotsial-06a16b377/" target="_blank" class="btn btn-ghost" data-sfx="click">LinkedIn</a>
+        <a href="https://t.me/smrbruh" target="_blank" class="btn btn-ghost" data-sfx="click">Telegram @smrbruh</a>
       </div>
     </div>
   </div>
@@ -1407,38 +1492,205 @@ footer {
   </div>
 </footer>
 
+<!-- Back to top -->
+<button class="to-top" id="toTop" aria-label="Scroll to top" data-sfx="click">↑</button>
+
 <script>
-// ── Boot sequence animation ──
+/* ════════════════════════════════════════════════
+   SOUND ENGINE — synthesized via Web Audio API
+   No external audio files. All sounds generated
+   procedurally for a crisp, terminal-native feel.
+   ════════════════════════════════════════════════ */
+const SoundEngine = (function() {
+  let ctx = null;
+  let enabled = true;
+  const STORAGE_KEY = 'smrbruh_sfx_enabled';
+
+  try {
+    const stored = window.localStorage ? localStorage.getItem(STORAGE_KEY) : null;
+    if (stored !== null) enabled = stored === '1';
+  } catch (e) { /* localStorage unavailable, default to enabled */ }
+
+  function getCtx() {
+    if (!ctx) {
+      const AC = window.AudioContext || window.webkitAudioContext;
+      if (!AC) return null;
+      ctx = new AC();
+    }
+    if (ctx.state === 'suspended') ctx.resume();
+    return ctx;
+  }
+
+  function tone({ freq = 440, duration = 0.08, type = 'sine', gain = 0.05, freqEnd = null, delay = 0 }) {
+    if (!enabled) return;
+    const c = getCtx();
+    if (!c) return;
+    const t0 = c.currentTime + delay;
+    const osc = c.createOscillator();
+    const amp = c.createGain();
+    osc.type = type;
+    osc.frequency.setValueAtTime(freq, t0);
+    if (freqEnd !== null) {
+      osc.frequency.exponentialRampToValueAtTime(Math.max(freqEnd, 1), t0 + duration);
+    }
+    amp.gain.setValueAtTime(gain, t0);
+    amp.gain.exponentialRampToValueAtTime(0.0001, t0 + duration);
+    osc.connect(amp);
+    amp.connect(c.destination);
+    osc.start(t0);
+    osc.stop(t0 + duration + 0.02);
+  }
+
+  return {
+    isEnabled() { return enabled; },
+    setEnabled(v) {
+      enabled = v;
+      try { if (window.localStorage) localStorage.setItem(STORAGE_KEY, v ? '1' : '0'); } catch (e) {}
+    },
+    // Soft mechanical-keyboard style click for buttons/links
+    click() {
+      tone({ freq: 1400, freqEnd: 600, duration: 0.045, type: 'square', gain: 0.035 });
+      tone({ freq: 2200, duration: 0.02, type: 'square', gain: 0.02, delay: 0.005 });
+    },
+    // Subtle hover tick
+    hover() {
+      tone({ freq: 1800, duration: 0.025, type: 'sine', gain: 0.018 });
+    },
+    // Accordion / panel open
+    open() {
+      tone({ freq: 520, freqEnd: 900, duration: 0.09, type: 'triangle', gain: 0.035 });
+    },
+    // Accordion / panel close
+    close() {
+      tone({ freq: 900, freqEnd: 420, duration: 0.08, type: 'triangle', gain: 0.03 });
+    },
+    // Single keystroke for the boot-sequence typing effect
+    key() {
+      const f = 1800 + Math.random() * 600;
+      tone({ freq: f, freqEnd: f * 0.7, duration: 0.018, type: 'square', gain: 0.012 });
+    },
+    // Toggle confirm
+    toggle(on) {
+      if (on) {
+        tone({ freq: 700, freqEnd: 1100, duration: 0.07, type: 'triangle', gain: 0.04 });
+      } else {
+        tone({ freq: 1100, freqEnd: 500, duration: 0.07, type: 'triangle', gain: 0.03 });
+      }
+    }
+  };
+})();
+
+/* ── Sound toggle UI ── */
+(function() {
+  const toggle = document.getElementById('soundToggle');
+  const label = document.getElementById('soundLabel');
+
+  function render() {
+    const on = SoundEngine.isEnabled();
+    toggle.classList.toggle('muted', !on);
+    toggle.setAttribute('aria-pressed', on ? 'true' : 'false');
+    label.textContent = on ? 'SFX ON' : 'SFX OFF';
+  }
+  render();
+
+  toggle.addEventListener('click', function() {
+    const next = !SoundEngine.isEnabled();
+    SoundEngine.setEnabled(next);
+    render();
+    SoundEngine.toggle(next);
+  });
+})();
+
+/* ── Global click sound for interactive elements ── */
+(function() {
+  const selector = '.btn, .detail-link, .to-top, .project-row-header, .skill-nav-item, .nav-links a';
+  document.addEventListener('click', function(e) {
+    const target = e.target.closest(selector);
+    if (!target) return;
+    if (target.id === 'soundToggle') return; // has its own sound
+    SoundEngine.click();
+  }, { capture: true });
+
+  // Light hover tick on key interactive rows (throttled)
+  let lastHover = 0;
+  document.addEventListener('mouseover', function(e) {
+    const target = e.target.closest('.project-row-header, .skill-nav-item, .metric');
+    if (!target) return;
+    const now = Date.now();
+    if (now - lastHover < 120) return;
+    lastHover = now;
+    SoundEngine.hover();
+  }, { capture: true });
+})();
+
+/* ── Boot sequence animation + typing sound ── */
 (function() {
   const lines = document.querySelectorAll('.boot-line');
   lines.forEach(line => {
     const delay = parseInt(line.dataset.delay) || 0;
-    setTimeout(() => line.classList.add('show'), delay + 200);
+    setTimeout(() => {
+      line.classList.add('show');
+      // Fire a few quick "keystroke" ticks to accompany the line appearing
+      const ticks = 3 + Math.floor(Math.random() * 3);
+      for (let i = 0; i < ticks; i++) {
+        setTimeout(() => SoundEngine.key(), i * 28);
+      }
+    }, delay + 200);
   });
 })();
 
-// ── Project accordion ──
+/* ── Project accordion ── */
 function toggleProject(row) {
   const isActive = row.classList.contains('active');
-  document.querySelectorAll('.project-row.active').forEach(r => r.classList.remove('active'));
-  if (!isActive) row.classList.add('active');
+  document.querySelectorAll('.project-row.active').forEach(r => {
+    r.classList.remove('active');
+    r.setAttribute('aria-expanded', 'false');
+  });
+  if (!isActive) {
+    row.classList.add('active');
+    row.setAttribute('aria-expanded', 'true');
+    SoundEngine.open();
+  } else {
+    SoundEngine.close();
+  }
 }
 
-// ── Skills tab panel ──
+// Keyboard support for project rows
+document.querySelectorAll('.project-row').forEach(row => {
+  row.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      toggleProject(row);
+    }
+  });
+});
+
+/* ── Skills tab panel ── */
 const skillsNav = document.getElementById('skillsNav');
+function activateSkillPanel(item) {
+  const panelId = item.dataset.panel;
+  document.querySelectorAll('.skill-nav-item').forEach(i => i.classList.remove('active'));
+  document.querySelectorAll('.skill-panel').forEach(p => p.classList.remove('active'));
+  item.classList.add('active');
+  document.getElementById('panel-' + panelId).classList.add('active');
+}
 skillsNav.addEventListener('click', function(e) {
   const item = e.target.closest('.skill-nav-item');
   if (!item) return;
-  const panelId = item.dataset.panel;
-
-  document.querySelectorAll('.skill-nav-item').forEach(i => i.classList.remove('active'));
-  document.querySelectorAll('.skill-panel').forEach(p => p.classList.remove('active'));
-
-  item.classList.add('active');
-  document.getElementById('panel-' + panelId).classList.add('active');
+  activateSkillPanel(item);
+  SoundEngine.click();
+});
+skillsNav.addEventListener('keydown', function(e) {
+  const item = e.target.closest('.skill-nav-item');
+  if (!item) return;
+  if (e.key === 'Enter' || e.key === ' ') {
+    e.preventDefault();
+    activateSkillPanel(item);
+    SoundEngine.click();
+  }
 });
 
-// ── Scroll reveal ──
+/* ── Scroll reveal ── */
 const observer = new IntersectionObserver((entries) => {
   entries.forEach(e => {
     if (e.isIntersecting) {
@@ -1449,9 +1701,10 @@ const observer = new IntersectionObserver((entries) => {
 }, { threshold: 0.08 });
 document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
-// ── Nav active state ──
+/* ── Nav active state + back-to-top ── */
 const sections = document.querySelectorAll('section[id]');
 const navLinks = document.querySelectorAll('.nav-links a');
+const toTopBtn = document.getElementById('toTop');
 window.addEventListener('scroll', () => {
   let current = '';
   sections.forEach(s => {
@@ -1461,7 +1714,12 @@ window.addEventListener('scroll', () => {
     const isActive = a.getAttribute('href') === '#' + current;
     a.style.color = isActive ? 'var(--ice)' : '';
   });
+  toTopBtn.classList.toggle('show', window.scrollY > 600);
 }, { passive: true });
+
+toTopBtn.addEventListener('click', () => {
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+});
 </script>
 </body>
 </html>
